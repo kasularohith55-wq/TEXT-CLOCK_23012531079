@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TEXTCLOCK_23012531079">
-        <activity
-            android:name=".MainActivity"
+
+        <!-- Main activity (change name/package if different) -->
+        <activity android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- AppWidget provider -->
+        <receiver
+            android:name="com.example.textclock_23012531079.ClockWidget"
+            android:exported="true">
+            <intent-filter>
+                <!-- Required for app widget updates -->
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <!-- Optional: reacts when device time is manually changed -->
+                <action android:name="android.intent.action.TIME_SET" />
+                <!-- Optional: reacts to timezone changes -->
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/clock_appwidget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

@@ -1,35 +1,67 @@
 package com.example.textclock_23012531079
-
+import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.view.View
-import android.widget.TextClock // Import TextClock
-import android.widget.Toast     // Import Toast
-import androidx.activity.enableEdgeToEdge
+import android.os.Handler
+import android.os.Looper
+import android.view.animation.LinearInterpolator
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var timeText: TextView
+    private lateinit var secondsText: TextView
+    private lateinit var ampmText: TextView
+    private lateinit var dateText: TextView
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    // formats
+    private val timeFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
+    private val secFormat = SimpleDateFormat("ss", Locale.getDefault())
+    private val ampmFormat = SimpleDateFormat("a", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("EEE, MMM d yyyy", Locale.getDefault())
+
+    private val tickRunnable = object : Runnable {
+        override fun run() {
+            val now = Date()
+            timeText.text = timeFormat.format(now)
+            secondsText.text = secFormat.format(now)
+            ampmText.text = ampmFormat.format(now)
+            dateText.text = dateFormat.format(now)
+
+            // schedule precisely on next second boundary
+            val delay = 1000L - (now.time % 1000L)
+            handler.postDelayed(this, delay)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // Recommended for modern UI
         setContentView(R.layout.activity_main)
+        timeText = findViewById(R.id.timeText)
+        secondsText = findViewById(R.id.secondsText)
+        ampmText = findViewById(R.id.ampm)
+        dateText = findViewById(R.id.dateText)
 
-        // Set up insets for edge-to-edge display
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        // subtle continuous translation animation on the pulse view
+        val pulse = findViewById<android.view.View>(R.id.pulse)
+        val animator = ObjectAnimator.ofFloat(pulse, "alpha", 0.5f, 1f)
+        animator.duration = 1200
+        animator.repeatMode = ObjectAnimator.REVERSE
+        animator.repeatCount = ObjectAnimator.INFINITE
+        animator.interpolator = LinearInterpolator()
+        animator.start()
+    }
 
-        // 1. Correctly find the TextClock by its ID
-        val textClock = findViewById<TextClock>(R.id.textClock)
+    override fun onResume() {
+        super.onResume()
+        handler.post(tickRunnable)
+    }
 
-        // 2. Use the correct method name "setOnClickListener" and the correct variable name "textClock"
-        textClock.setOnClickListener {
-            // 3. Use the correct syntax for Toast.makeText and .show()
-            Toast.makeText(this@MainActivity, "TextClock Clicked!", Toast.LENGTH_LONG).show()
-        }
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(tickRunnable)
     }
 }
