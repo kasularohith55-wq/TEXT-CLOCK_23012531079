@@ -265,9 +265,9 @@ Add the widget from the home screen (hold → Widgets → “Premium Digital Clo
 🖼 Screenshots
 
 (Add your screenshots here when ready. I can format them for you.)
+<img width="668" height="681" alt="image" src="https://github.com/user-attachments/assets/93146944-30e8-47bf-9fa9-ef01f58fbcda" />
 
-![App Screenshot](screenshots/app.png)
-![Widget Screenshot](screenshots/widget.png)
+<img width="1897" height="997" alt="image" src="https://github.com/user-attachments/assets/f7e6d801-1949-44a4-955d-d322cca2beec" />
 
 📌 Future Enhancements
 
